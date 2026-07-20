@@ -24,7 +24,9 @@
                   "pm.test(\"Token is present\", function () {",
                   "    var jsonData = pm.response.json();",
                   "    pm.expect(jsonData).to.have.property('token');",
-                  "});"
+                  "});",
+                  "",
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -224,10 +226,199 @@
       "name": "Booking",
       "item": [
         {
-          "name": "New Request",
+          "name": "BOOK-01_GetBookingIds-NoParams",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Ответ является массивом и содержит элементы\", function () {",
+                  "    let responseData = pm.response.json();",
+                  "    pm.expect(responseData).to.be.an(\"array\");",
+                  "    pm.expect(responseData.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Первый элемент массива содержит числовое поле bookingid\", function () {",
+                  "    let responseData = pm.response.json();",
+                  "    pm.expect(responseData[0]).to.have.property(\"bookingid\");",
+                  "    pm.expect(responseData[0].bookingid).to.be.a(\"number\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/booking",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-02_GetBookingIds-FilterByName",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Массив результатов не пустой\", function () {",
+                  "    let responseData = pm.response.json();",
+                  "    pm.expect(responseData).to.be.an(\"array\");",
+                  "    pm.expect(responseData.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Найденные элементы содержат bookingid\", function () {",
+                  "    let responseData = pm.response.json();",
+                  "    pm.expect(responseData[0]).to.have.property(\"bookingid\");",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/booking?firstname=Jane&lastname=Doe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking"
+              ],
+              "query": [
+                {
+                  "key": "firstname",
+                  "value": "Jane"
+                },
+                {
+                  "key": "lastname",
+                  "value": "Doe"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-03_GetBookingIds-FilterByDate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"Массив результатов содержит найденные бронирования\", function () {",
+                  "    let responseData = pm.response.json();",
+                  "    pm.expect(responseData).to.be.an(\"array\");",
+                  "    pm.expect(responseData.length).to.be.above(0); ",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/booking?checkin=2018-01-01&checkout=2019-01-01",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking"
+              ],
+              "query": [
+                {
+                  "key": "checkin",
+                  "value": "2018-01-01"
+                },
+                {
+                  "key": "checkout",
+                  "value": "2019-01-01"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-04_GetBookingIds-NonExistentName",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Тело ответа — пустой массив []\", function () {",
+                  "    let responseData = pm.response.json();",
+                  "    pm.expect(responseData).to.be.an(\"array\");",
+                  "    pm.expect(responseData).to.be.empty; ",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/booking?firstname=dsfdsf&lastname=sdfsdf",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking"
+              ],
+              "query": [
+                {
+                  "key": "firstname",
+                  "value": "dsfdsf"
+                },
+                {
+                  "key": "lastname",
+                  "value": "sdfsdf"
+                }
+              ]
+            }
           },
           "response": []
         }

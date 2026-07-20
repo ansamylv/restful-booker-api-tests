@@ -1,7 +1,12 @@
 | ID | Проверка | Ожидаемый результат | Фактический результат | Статус |
 | :--- | :--- | :--- | :--- | :---: |
 | **AUTH** | **POST /auth (Создание токена)** | | | |
-| `AUTH-01` | Успешная генерация токена | `200 OK`, тело ответа содержит ключ `"token"` | `200 OK`, `{"token": "0c032d0455ed411"}` |  Pass |
-| `AUTH-02` | Невалидный пароль в Request Body | `200 OK`, тело ответа: `{"reason": "Bad credentials"}` | `200 OK`, `{"reason": "Bad credentials"}` |  Pass |
-| `AUTH-03` | Невалидный юзернейм в Request Body | `200 OK`, тело ответа: `{"reason": "Bad credentials"}` | `200 OK`, `{"reason": "Bad credentials"}` |  Pass |
-| `AUTH-04` | Передача пустого JSON `{}` в Request Body | `200 OK`, тело ответа: `{"reason": "Bad credentials"}` | `200 OK`, `{"reason": "Bad credentials"}` |  Pass |
+| `AUTH-01` | Успешная генерация токена | `200 OK`, тело ответа содержит ключ `"token"` | `200 OK`, `{"token": "0c032d0455ed411"}` | Pass |
+| `AUTH-02` | Невалидный пароль в Request Body | `200 OK`, тело ответа: `{"reason": "Bad credentials"}` | `200 OK`, `{"reason": "Bad credentials"}` | Pass |
+| `AUTH-03` | Невалидный юзернейм в Request Body | `200 OK`, тело ответа: `{"reason": "Bad credentials"}` | `200 OK`, `{"reason": "Bad credentials"}` | Pass |
+| `AUTH-04` | Передача пустого JSON `{}` в Request Body | `200 OK`, тело ответа: `{"reason": "Bad credentials"}` | `200 OK`, `{"reason": "Bad credentials"}` | Pass |
+| **BOOK** | **GET /booking (Управление бронированиями)** | | | |
+| `BOOK-01` | Запрос всех бронирований без параметров | `200 ОК`, тело ответа содержит значение: ключ `"bookingid" : id` | `200 OK`, `[{"bookingid": 1}, {"bookingid": 2}, ...]` | Pass |
+| `BOOK-02` | Запрос всех бронирований с фильтром: по имени | `200 OK`, тело ответа содержит значение: ключ `"bookingid" : id` | `200 OK`, `[{"bookingid": 12}, {"bookingid": 17}, {"bookingid": 25}, ...]` | Pass |
+| `BOOK-03` | Запрос всех бронирований с фильтром: по дате | `200 OK`, тело ответа содержит значение: ключ `"bookingid" : id` | `200 ОК`, выводит пустой массив `[]` с одновременно введенными параметрами checkin и checkout | Fail |
+| `BOOK-04` | Поиск несуществующего имени | `200 ОК`, возвращает пустой массив `[]` | `200 OK`, выводит пустой массив | Pass |
