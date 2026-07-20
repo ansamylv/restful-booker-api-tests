@@ -11,7 +11,7 @@
       "name": "Auth",
       "item": [
         {
-          "name": "01_CreateToken_Success",
+          "name": "AUTH-01_CreateToken_Success",
           "event": [
             {
               "listen": "test",
@@ -63,7 +63,7 @@
           "response": []
         },
         {
-          "name": "02_CreateToken_InvalidPassword",
+          "name": "AUTH-02_CreateToken_InvalidPassword",
           "event": [
             {
               "listen": "test",
@@ -115,7 +115,7 @@
           "response": []
         },
         {
-          "name": "03_CreateToken_InvalidUsername",
+          "name": "AUTH-03_CreateToken_InvalidUsername",
           "event": [
             {
               "listen": "test",
@@ -167,7 +167,7 @@
           "response": []
         },
         {
-          "name": "04_CreateToken_EmptyBody",
+          "name": "AUTH-04_CreateToken_EmptyBody",
           "event": [
             {
               "listen": "test",
@@ -222,7 +222,16 @@
     },
     {
       "name": "Booking",
-      "item": []
+      "item": [
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
