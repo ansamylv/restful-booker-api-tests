@@ -26,6 +26,11 @@
                   "    pm.expect(jsonData).to.have.property('token');",
                   "});",
                   "",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.environment.set(\"token\", jsonData.token);",
+                  "}",
+                  "",
                   ""
                 ],
                 "type": "text/javascript",
@@ -225,6 +230,71 @@
     {
       "name": "Booking",
       "item": [
+        {
+          "name": "BOOK-08_CreateBooking_Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Тело ответа содержит bookingid и корректный объект booking\", function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    ",
+                  "    pm.expect(jsonData).to.have.property(\"bookingid\").that.is.a(\"number\");",
+                  "    pm.expect(jsonData).to.have.property(\"booking\").that.is.an(\"object\");",
+                  "    ",
+                  "    let booking = jsonData.booking;",
+                  "    pm.expect(booking).to.have.property(\"firstname\").that.is.a(\"string\");",
+                  "    pm.expect(booking).to.have.property(\"lastname\").that.is.a(\"string\");",
+                  "    pm.expect(booking).to.have.property(\"totalprice\").that.is.a(\"number\");",
+                  "    pm.expect(booking).to.have.property(\"depositpaid\").that.is.a(\"boolean\");",
+                  "    ",
+                  "    pm.expect(booking).to.have.property(\"bookingdates\").that.is.an(\"object\");",
+                  "    pm.expect(booking.bookingdates).to.have.property(\"checkin\").that.is.a(\"string\");",
+                  "    pm.expect(booking.bookingdates).to.have.property(\"checkout\").that.is.a(\"string\");",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.environment.set(\"bookingId\", jsonData.bookingid);",
+                  "}",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstname\" : \"Jim\",\n    \"lastname\" : \"Brown\",\n    \"totalprice\" : 111,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2018-01-01\",\n        \"checkout\" : \"2019-01-01\"\n    }\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/booking",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking"
+              ]
+            }
+          },
+          "response": []
+        },
         {
           "name": "BOOK-01_GetBookingIds-NoParams",
           "event": [
@@ -463,13 +533,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/booking/1",
+              "raw": "{{baseUrl}}/booking/{{bookingId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "booking",
-                "1"
+                "{{bookingId}}"
               ]
             }
           },
@@ -536,69 +606,6 @@
               "path": [
                 "booking",
                 "0"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "BOOK-08_CreateBooking_Success",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Статус ответа 200 OK\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Тело ответа содержит bookingid и корректный объект booking\", function () {",
-                  "    let jsonData = pm.response.json();",
-                  "    ",
-                  "    pm.expect(jsonData).to.have.property(\"bookingid\").that.is.a(\"number\");",
-                  "    pm.expect(jsonData).to.have.property(\"booking\").that.is.an(\"object\");",
-                  "    ",
-                  "    let booking = jsonData.booking;",
-                  "    pm.expect(booking).to.have.property(\"firstname\").that.is.a(\"string\");",
-                  "    pm.expect(booking).to.have.property(\"lastname\").that.is.a(\"string\");",
-                  "    pm.expect(booking).to.have.property(\"totalprice\").that.is.a(\"number\");",
-                  "    pm.expect(booking).to.have.property(\"depositpaid\").that.is.a(\"boolean\");",
-                  "    ",
-                  "    pm.expect(booking).to.have.property(\"bookingdates\").that.is.an(\"object\");",
-                  "    pm.expect(booking.bookingdates).to.have.property(\"checkin\").that.is.a(\"string\");",
-                  "    pm.expect(booking.bookingdates).to.have.property(\"checkout\").that.is.a(\"string\");",
-                  "});",
-                  "",
-                  "if (pm.response.code === 200) {",
-                  "    let jsonData = pm.response.json();",
-                  "    pm.environment.set(\"bookingId\", jsonData.bookingid);",
-                  "}"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"firstname\" : \"Jim\",\n    \"lastname\" : \"Brown\",\n    \"totalprice\" : 111,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2018-01-01\",\n        \"checkout\" : \"2019-01-01\"\n    }\n}\n",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/booking",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "booking"
               ]
             }
           },
@@ -679,7 +686,7 @@
             "header": [
               {
                 "key": "Cookie",
-                "value": "token=5b893acc49a3066",
+                "value": "token={{token}}",
                 "type": "text"
               }
             ],
@@ -693,13 +700,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/booking/1",
+              "raw": "{{baseUrl}}/booking/{{bookingId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "booking",
-                "1"
+                "{{bookingId}}"
               ]
             }
           },
@@ -727,7 +734,7 @@
             "header": [
               {
                 "key": "Cookie",
-                "value": "token=5b893acc49a3066",
+                "value": "token={{token}}",
                 "type": "text"
               }
             ],
@@ -741,13 +748,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/booking/1",
+              "raw": "{{baseUrl}}/booking/{{bookingId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "booking",
-                "1"
+                "{{bookingId}}"
               ]
             }
           },
@@ -786,7 +793,7 @@
             "header": [
               {
                 "key": "Cookie",
-                "value": "token=c6218c745fd8fa4",
+                "value": "token={{token}}",
                 "type": "text"
               }
             ],
@@ -800,13 +807,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/booking/1",
+              "raw": "{{baseUrl}}/booking/{{bookingId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "booking",
-                "1"
+                "{{bookingId}}"
               ]
             }
           },
@@ -842,7 +849,7 @@
             "header": [
               {
                 "key": "Cookie",
-                "value": "token=93620fa1f2888a7",
+                "value": "token={{token}}",
                 "type": "text"
               },
               {
@@ -861,13 +868,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/booking/1",
+              "raw": "{{baseUrl}}/booking/{{bookingId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "booking",
-                "1"
+                "{{bookingId}}"
               ]
             }
           },
@@ -895,7 +902,7 @@
             "header": [
               {
                 "key": "Cookie",
-                "value": "token=93620fa1f2888a7",
+                "value": "token={{token}}",
                 "type": "text"
               }
             ],
@@ -944,18 +951,18 @@
             "header": [
               {
                 "key": "Cookie",
-                "value": "token=93620fa1f2888a7",
+                "value": "token={{token}}",
                 "type": "text"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/booking/1",
+              "raw": "{{baseUrl}}/booking/{{bookingId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "booking",
-                "1"
+                "{{bookingId}}"
               ]
             }
           },
@@ -984,7 +991,7 @@
             "header": [
               {
                 "key": "Cookie",
-                "value": "token=93620fa1f2888a7",
+                "value": "token={{token}}",
                 "type": "text"
               }
             ],
