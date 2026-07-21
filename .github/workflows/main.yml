@@ -1,4 +1,4 @@
-name: API Tests with Newman
+name: API Tests and Report Deployment
 
 on:
   push:
@@ -7,8 +7,11 @@ on:
     branches: [ "main", "master" ]
 
 jobs:
-  test:
+  test-and-deploy:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -22,5 +25,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run API tests with Newman
+      - name: Run API tests and generate HTML report
+        if: always()
         run: npm test
+
+      - name: Deploy HTML report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./reports
