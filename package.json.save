@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "newman run \"Restful-Booker API Testing.postman_collection.json\" -e \"baseUrl&token&bookingId.postman_environment.json\" -r htmlextra --reporter-htmlextra-export ./reports/index.html"
+    "test": "newman run \"Restful-Booker API Testing.postman_collection.json\" -e \"baseUrl&token&bookingId.postman_environment.json\""
   },
   "repository": {
     "type": "git",
