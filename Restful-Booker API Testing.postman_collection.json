@@ -421,6 +421,623 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "BOOK-05_GetBooking_ValidId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Тело ответа содержит все обязательные поля и валидные типы\", function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    ",
+                  "    pm.expect(jsonData).to.have.property(\"firstname\").that.is.a(\"string\");",
+                  "    pm.expect(jsonData).to.have.property(\"lastname\").that.is.a(\"string\");",
+                  "    pm.expect(jsonData).to.have.property(\"totalprice\").that.is.a(\"number\");",
+                  "    pm.expect(jsonData).to.have.property(\"depositpaid\").that.is.a(\"boolean\");",
+                  "    ",
+                  "    pm.expect(jsonData).to.have.property(\"bookingdates\").that.is.an(\"object\");",
+                  "    pm.expect(jsonData.bookingdates).to.have.property(\"checkin\").that.is.a(\"string\");",
+                  "    pm.expect(jsonData.bookingdates).to.have.property(\"checkout\").that.is.a(\"string\");",
+                  "});",
+                  "",
+                  "pm.test(\"Поле additionalneeds является строкой (если присутствует)\", function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    if (jsonData.hasOwnProperty(\"additionalneeds\")) {",
+                  "        pm.expect(jsonData.additionalneeds).to.be.a(\"string\");",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/booking/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-06_GetBooking_NegativeId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 404 Not Found или 400 Bad Request\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([404, 400]);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/booking/-1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking",
+                "-1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-07_GetBooking_ZeroId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 404 Not Found или 400 Bad Request\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([404, 400]);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/booking/0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking",
+                "0"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-08_CreateBooking_Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Тело ответа содержит bookingid и корректный объект booking\", function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    ",
+                  "    pm.expect(jsonData).to.have.property(\"bookingid\").that.is.a(\"number\");",
+                  "    pm.expect(jsonData).to.have.property(\"booking\").that.is.an(\"object\");",
+                  "    ",
+                  "    let booking = jsonData.booking;",
+                  "    pm.expect(booking).to.have.property(\"firstname\").that.is.a(\"string\");",
+                  "    pm.expect(booking).to.have.property(\"lastname\").that.is.a(\"string\");",
+                  "    pm.expect(booking).to.have.property(\"totalprice\").that.is.a(\"number\");",
+                  "    pm.expect(booking).to.have.property(\"depositpaid\").that.is.a(\"boolean\");",
+                  "    ",
+                  "    pm.expect(booking).to.have.property(\"bookingdates\").that.is.an(\"object\");",
+                  "    pm.expect(booking.bookingdates).to.have.property(\"checkin\").that.is.a(\"string\");",
+                  "    pm.expect(booking.bookingdates).to.have.property(\"checkout\").that.is.a(\"string\");",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.environment.set(\"bookingId\", jsonData.bookingid);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstname\" : \"Jim\",\n    \"lastname\" : \"Brown\",\n    \"totalprice\" : 111,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2018-01-01\",\n        \"checkout\" : \"2019-01-01\"\n    }\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/booking",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-09_CreateBooking_MissingFirstname",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 400 Bad Request или 404 Not Found\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"lastname\" : \"Brown\",\n    \"totalprice\" : 111,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2018-01-01\",\n        \"checkout\" : \"2019-01-01\"\n    }\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/booking",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-10_UpdateBooking_Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Тело ответа содержит все обновленные поля\", function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    ",
+                  "    pm.expect(jsonData).to.have.property(\"firstname\").that.is.a(\"string\");",
+                  "    pm.expect(jsonData).to.have.property(\"lastname\").that.is.a(\"string\");",
+                  "    pm.expect(jsonData).to.have.property(\"totalprice\").that.is.a(\"number\");",
+                  "    pm.expect(jsonData).to.have.property(\"depositpaid\").that.is.a(\"boolean\");",
+                  "    pm.expect(jsonData).to.have.property(\"bookingdates\").that.is.an(\"object\");",
+                  "    pm.expect(jsonData.bookingdates).to.have.property(\"checkin\").that.is.a(\"string\");",
+                  "    pm.expect(jsonData.bookingdates).to.have.property(\"checkout\").that.is.a(\"string\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "token=5b893acc49a3066",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstname\" : \"James\",\n    \"lastname\" : \"Brown\",\n    \"totalprice\" : 111,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2018-01-01\",\n        \"checkout\" : \"2019-01-01\"\n    },\n    \"additionalneeds\" : \"Breakfast\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/booking/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-11_UpdateBooking_EmptyFirstname",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 400 Bad Request или 404 Not Found\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "token=5b893acc49a3066",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"lastname\" : \"Brown\",\n    \"totalprice\" : 111,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2018-01-01\",\n        \"checkout\" : \"2019-01-01\"\n    },\n    \"additionalneeds\" : \"Breakfast\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/booking/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-12_PartialUpdateBooking_FirstnameLastname",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Тело ответа содержит корректную структуру после PATCH\", function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    ",
+                  "    pm.expect(jsonData).to.have.property(\"firstname\").that.is.a(\"string\");",
+                  "    pm.expect(jsonData).to.have.property(\"lastname\").that.is.a(\"string\");",
+                  "    pm.expect(jsonData).to.have.property(\"totalprice\").that.is.a(\"number\");",
+                  "    pm.expect(jsonData).to.have.property(\"depositpaid\").that.is.a(\"boolean\");",
+                  "    pm.expect(jsonData).to.have.property(\"bookingdates\").that.is.an(\"object\");",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "token=c6218c745fd8fa4",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstname\" : \"James\",\n    \"lastname\" : \"Brown\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/booking/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-13_PartialUpdateBooking_Firstname",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Тело ответа содержит корректную структуру\", function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    ",
+                  "    pm.expect(jsonData).to.have.property(\"firstname\").that.is.a(\"string\");",
+                  "    pm.expect(jsonData).to.have.property(\"totalprice\").that.is.a(\"number\");",
+                  "    pm.expect(jsonData).to.have.property(\"depositpaid\").that.is.a(\"boolean\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "token=93620fa1f2888a7",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstname\" : \"James\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/booking/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-14_PartialUpdateBooking_NegativeId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 400 Bad Request или 404 Not Found\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "token=93620fa1f2888a7",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstname\" : \"James\",\n    \"lastname\" : \"Brown\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/booking/-1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking",
+                "-1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-15_DeleteBooking_Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "token=93620fa1f2888a7",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/booking/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BOOK-16_DeleteBooking_NegativeId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 400 Bad Request или 404 Not Found\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "token=93620fa1f2888a7",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/booking/-1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking",
+                "-1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Ping",
+      "item": [
+        {
+          "name": "PING-01_HealthCheck_Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Статус ответа 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ping",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ping"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     }
